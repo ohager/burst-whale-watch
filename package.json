@@ -1,0 +1,27 @@
+{
+  "name": "whale-watch",
+  "version": "1.0.0",
+  "description": "An account watcher for Burst",
+  "main": "./out/main.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build && node ./out/main.js"
+  },
+  "keywords": [
+    "burstjs"
+  ],
+  "author": "ohager",
+  "license": "MIT",
+  "dependencies": {
+    "@burstjs/core": "0.1.0-rc1",
+    "@types/fs-extra": "^5.0.5",
+    "@types/lodash": "^4.14.121",
+    "fs-extra": "^7.0.1",
+    "lodash": "^4.17.11",
+    "yargs": "^13.2.1"
+  },
+  "devDependencies": {
+    "@types/yargs": "^12.0.9",
+    "typescript": "^3.3.3"
+  }
+}
