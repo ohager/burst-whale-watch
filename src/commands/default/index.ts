@@ -1,6 +1,8 @@
 import {composeApi} from "@burstjs/core";
 import {convertNumericIdToAddress} from "@burstjs/util";
 import {Config} from "../../config";
+import {App} from "../../views/app";
+import {} from "rx"
 
 exports.command = '$0';
 
@@ -18,15 +20,9 @@ exports.handler = async () => {
         apiRootUrl: 'burst'
     });
 
-    const results = await Promise.all(accounts.map(api.account.getAccountBalance));
+    const app = new App();
+    app.start(() => {
+        console.log('Exit');
+    })
 
-    // TODO: pass to state, which will update an UI
-    console.log(results.map(({balanceNQT}, i) => (
-            {
-                account: accounts[i],
-                accountAddress: convertNumericIdToAddress(accounts[i]),
-                balanceNQT
-            })
-        )
-    );
 };

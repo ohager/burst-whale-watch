@@ -5,7 +5,7 @@
   "main": "./out/main.js",
   "scripts": {
     "build": "tsc",
-    "start": "npm run build && node ./out/main.js"
+    "start": "npm run build && node ./out/src/main.js"
   },
   "keywords": [
     "burstjs"
@@ -19,6 +19,7 @@
     "fs-extra": "^7.0.1",
     "inquirer": "^6.2.2",
     "lodash": "^4.17.11",
+    "neo-blessed": "^0.2.0",
     "yargs": "^13.2.1"
   },
   "devDependencies": {

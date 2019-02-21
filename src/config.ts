@@ -33,8 +33,6 @@ export class Config {
             accounts: uniq(config.accounts.concat(accounts.map(asString)))
         };
 
-        console.log('accounts',updatedConfig);
-
         writeJsonSync(configPath, updatedConfig);
         return config;
     }
