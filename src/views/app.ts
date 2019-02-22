@@ -1,31 +1,40 @@
+import * as Stappo from "stappo";
 import {Scene} from "./scene";
-import {Header} from "./header.view";
-import {Watcher} from "../watcher";
+import {HeaderView} from "./header.view";
+import {BrsCollector} from "../collectors/brs.collector";
 import {Config} from "../config";
 
 export class App {
     private scene: Scene = new Scene();
-    private watcher: Watcher;
+    private brsCollector: BrsCollector;
 
-    constructor(private config:Config){
-        this.watcher = new Watcher(config);
+    constructor(private config:Config){}
+
+    private initCollectors(){
+        const store = new Stappo();
+        this.brsCollector = new BrsCollector(store, this.config);
+    }
+
+    private initViews(){
+        this.scene.addView("header", new HeaderView());
     }
 
     public start(onExit) {
-
-        this.scene.addView("header", new Header());
+        this.initCollectors();
+        this.initViews();
 
         this.scene.onExit(({reason, detail}) => {
             this.stop();
             onExit(reason, detail);
         });
 
-        //this.watcher.subscribe(this.scene.render.bind(this.scene));
-        this.watcher.start(1);
+        const renderer = this.scene.render.bind(this.scene);
+//        this.brsCollector.start(renderer);
+        this.brsCollector.start(console.log);
     }
 
     public stop(){
-        this.watcher.destroy();
+        this.brsCollector.stop();
         this.scene.destroy();
     }
 

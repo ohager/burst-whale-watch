@@ -3,7 +3,7 @@ import {View} from "./view";
 import {author, version} from "../../package.json";
 
 
-export class Header implements View {
+export class HeaderView implements View {
     private readonly box: any;
     private leftText: any;
     private rightText: any;
