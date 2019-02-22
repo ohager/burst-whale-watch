@@ -11,12 +11,12 @@ const getBalances = async (api: Api, accounts: Array<string>): Promise<Balance[]
 );
 
 const mapBalancesToAccounts = (accounts: Array<string>) => (balances: Array<Balance>) => (
-    accounts.reduce( (prev, accountId, index) => ({ [accountId]: balances[index] }) , {})
+    accounts.reduce( (prev, accountId, index) => ({ [accountId]: balances[index].balanceNQT }) , {})
 );
 
 const addTotalSum = (accountBalances:any) => {
     const total = Object.keys(accountBalances).reduce( (totalBalance, accountId) =>
-                  totalBalance + convertNQTStringToNumber(accountBalances[accountId].balanceNQT)
+                  totalBalance + convertNQTStringToNumber(accountBalances[accountId])
     , 0);
 
     return {

@@ -28,9 +28,10 @@ export class App {
             onExit(reason, detail);
         });
 
+        this.scene.render(null); // initial
+
         const renderer = this.scene.render.bind(this.scene);
-//        this.brsCollector.start(renderer);
-        this.brsCollector.start(console.log);
+        this.brsCollector.start(renderer);
     }
 
     public stop(){

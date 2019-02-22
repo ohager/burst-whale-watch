@@ -5,8 +5,8 @@ import {author, version} from "../../package.json";
 
 export class HeaderView implements View {
     private readonly box: any;
-    private leftText: any;
-    private rightText: any;
+    private readonly leftText: any;
+    private readonly rightText: any;
 
     constructor() {
 
@@ -61,6 +61,11 @@ export class HeaderView implements View {
     update(state:any) {
         let line = 0;
         let target = this.leftText;
-        target.setLine(line, `Header: ${state}`);
+        if(!state){
+            target.setLine(line, `Total: ...`);
+        }
+        else{
+            target.setLine(line, `Total: ${state.brs.total} BURST`);
+        }
     }
 }
