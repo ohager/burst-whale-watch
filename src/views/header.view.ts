@@ -1,6 +1,7 @@
 import * as blessed from "neo-blessed"
 import {View} from "./view";
 import {author, version} from "../../package.json";
+import {selectGetTotalBalance, selectIsLoading} from "../state/selectors";
 
 
 export class HeaderView implements View {
@@ -58,14 +59,32 @@ export class HeaderView implements View {
 
     get element() { return this.box; }
 
-    update(state:any) {
+    public update(state:any) {
+
+        this.updateLeft(state);
+        this.updateRight(state);
+    }
+
+    public updateRight(state:any) {
+        let line = 0;
+        let target = this.rightText;
+        target.setLine(line, `BTC/BURST: ...`);
+    }
+
+    private updateLeft(state:any) {
         let line = 0;
         let target = this.leftText;
-        if(!state){
-            target.setLine(line, `Total: ...`);
+
+        const isLoading = selectIsLoading(state);
+
+        if(isLoading){
+            target.setLine(line, `Total: (loading...)`);
         }
         else{
-            target.setLine(line, `Total: ${state.brs.total} BURST`);
+            const totalBalance = selectGetTotalBalance(state);
+            target.setLine(line, `Total: ${totalBalance} BURST`);
         }
     }
+
+
 }

@@ -1,5 +1,5 @@
 import {Collector} from "./collector";
-import {Store} from "../store";
+import {Store} from "../../typings/store";
 
 export class PoloniexCollector extends Collector{
     constructor(store:Store){

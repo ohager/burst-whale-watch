@@ -3,10 +3,10 @@ import {mergeMap, map} from "rxjs/operators"
 import {Api, Balance, composeApi} from "@burstjs/core";
 import {convertNQTStringToNumber} from "@burstjs/util";
 import {Collector} from "./collector";
-import {Store} from "../store";
+import {Store} from "../../typings/store";
 import {Config} from "../config";
 
-const getBalances = async (api: Api, accounts: Array<string>): Promise<Balance[]> => (
+const fetchBalances = async (api: Api, accounts: Array<string>): Promise<Balance[]> => (
     Promise.all(accounts.map(api.account.getAccountBalance))
 );
 
@@ -20,7 +20,9 @@ const addTotalSum = (accountBalances:any) => {
     , 0);
 
     return {
-        ...accountBalances,
+        accounts: {
+            ...accountBalances,
+        },
         total
     }
 };
@@ -42,11 +44,14 @@ export class BrsCollector extends Collector{
         const {accounts} = this.config;
 
         this.intervalSubscription = interval(1000).pipe(
-            mergeMap(() => getBalances(this.api, accounts)),
+            mergeMap(() => fetchBalances(this.api, accounts)),
             map( mapBalancesToAccounts(accounts) ),
             map( addTotalSum )
         ).subscribe((data) => {
-            this.update( 'brs', data);
+            this.update( 'brs', {
+                ...data,
+                isLoading:false,
+            } );
         });
     }
 

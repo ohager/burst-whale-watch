@@ -1,4 +1,4 @@
-import {Store} from "../store";
+import {Store} from "../../typings/store";
 
 
 export abstract class Collector{

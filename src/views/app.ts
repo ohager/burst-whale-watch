@@ -4,6 +4,20 @@ import {HeaderView} from "./header.view";
 import {BrsCollector} from "../collectors/brs.collector";
 import {Config} from "../config";
 
+const getInitialState = () =>({
+    brs: {
+        isLoading: true,
+        total: null,
+        accounts: null,
+    },
+    exchange: {
+      burst_btc: null,
+      btc_usd: null,
+      btc_eur: null
+    }
+});
+
+
 export class App {
     private scene: Scene = new Scene();
     private brsCollector: BrsCollector;
@@ -12,6 +26,7 @@ export class App {
 
     private initCollectors(){
         const store = new Stappo();
+        store.update(getInitialState);
         this.brsCollector = new BrsCollector(store, this.config);
     }
 
@@ -28,7 +43,7 @@ export class App {
             onExit(reason, detail);
         });
 
-        this.scene.render(null); // initial
+        this.scene.render(getInitialState()); // initial
 
         const renderer = this.scene.render.bind(this.scene);
         this.brsCollector.start(renderer);
