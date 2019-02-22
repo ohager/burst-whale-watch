@@ -1,12 +1,17 @@
 import {Scene} from "./scene";
 import {Header} from "./header.view";
-import {Watcher} from "../Watcher";
+import {Watcher} from "../watcher";
+import {Config} from "../config";
 
 export class App {
     private scene: Scene = new Scene();
-    private watcher: Watcher = new Watcher();
+    private watcher: Watcher;
 
-    start(onExit) {
+    constructor(private config:Config){
+        this.watcher = new Watcher(config);
+    }
+
+    public start(onExit) {
 
         this.scene.addView("header", new Header());
 
@@ -15,11 +20,11 @@ export class App {
             onExit(reason, detail);
         });
 
-        this.watcher.subscribe(this.scene.render.bind(this.scene));
+        //this.watcher.subscribe(this.scene.render.bind(this.scene));
         this.watcher.start(1);
     }
 
-    stop(){
+    public stop(){
         this.watcher.destroy();
         this.scene.destroy();
     }
