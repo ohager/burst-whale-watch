@@ -66,9 +66,10 @@ export class HeaderView implements View {
     }
 
     public updateRight(state:any) {
-        let line = 0;
         let target = this.rightText;
-        target.setLine(line, `BTC/BURST: ...`);
+        target.setLine(0, `BTC/BURST: ...`);
+        target.setLine(1, `BTC/USD: ...`);
+        target.setLine(2, `BTC/EUR: ...`);
     }
 
     private updateLeft(state:any) {

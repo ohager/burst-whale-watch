@@ -1,13 +1,11 @@
-import {Store} from "../../typings/store";
+import {Store} from "../../typings/stappo/store";
 
 
 export abstract class Collector{
-    private listenerId: number;
 
     protected constructor(protected store:Store) {}
 
-    public start(listener:(state:any)=>void){
-        this.listenerId = this.store.listen(listener);
+    public start(){
         this.onStart();
     }
 
@@ -15,7 +13,6 @@ export abstract class Collector{
     protected abstract onStop();
 
     public stop(){
-        this.store.unlisten(this.listenerId);
         this.onStop();
     }
 

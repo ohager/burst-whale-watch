@@ -1,9 +1,9 @@
 import {interval, Subscription} from "rxjs"
-import {mergeMap, map} from "rxjs/operators"
+import {mergeMap, map, startWith} from "rxjs/operators"
 import {Api, Balance, composeApi} from "@burstjs/core";
 import {convertNQTStringToNumber} from "@burstjs/util";
 import {Collector} from "./collector";
-import {Store} from "../../typings/store";
+import {Store} from "../../typings/stappo/store";
 import {Config} from "../config";
 
 const fetchBalances = async (api: Api, accounts: Array<string>): Promise<Balance[]> => (
@@ -43,7 +43,8 @@ export class BrsCollector extends Collector{
 
         const {accounts} = this.config;
 
-        this.intervalSubscription = interval(1000).pipe(
+        this.intervalSubscription = interval(10 * 1000).pipe(
+            startWith(0),
             mergeMap(() => fetchBalances(this.api, accounts)),
             map( mapBalancesToAccounts(accounts) ),
             map( addTotalSum )

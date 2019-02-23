@@ -3,6 +3,7 @@ import {Scene} from "./scene";
 import {HeaderView} from "./header.view";
 import {BrsCollector} from "../collectors/brs.collector";
 import {Config} from "../config";
+import {Store} from "../../typings/stappo/store";
 
 const getInitialState = () =>({
     brs: {
@@ -21,13 +22,16 @@ const getInitialState = () =>({
 export class App {
     private scene: Scene = new Scene();
     private brsCollector: BrsCollector;
+    private storeListenerId: number;
+    private store: Store;
 
     constructor(private config:Config){}
 
     private initCollectors(){
-        const store = new Stappo();
-        store.update(getInitialState);
-        this.brsCollector = new BrsCollector(store, this.config);
+        this.store = new Stappo();
+        this.store.update(getInitialState);
+        this.storeListenerId = this.store.listen(this.scene.render.bind(this.scene));
+        this.brsCollector = new BrsCollector(this.store, this.config);
     }
 
     private initViews(){
@@ -45,13 +49,13 @@ export class App {
 
         this.scene.render(getInitialState()); // initial
 
-        const renderer = this.scene.render.bind(this.scene);
-        this.brsCollector.start(renderer);
+        this.brsCollector.start();
     }
 
     public stop(){
         this.brsCollector.stop();
         this.scene.destroy();
+        this.store.unlisten(this.storeListenerId)
     }
 
 }
