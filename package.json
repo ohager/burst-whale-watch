@@ -25,6 +25,7 @@
   "devDependencies": {
     "@types/fs-extra": "^5.0.5",
     "@types/lodash": "^4.14.121",
+    "@types/ws": "^6.0.1",
     "@types/yargs": "^12.0.9",
     "typescript": "^3.3.3"
   }

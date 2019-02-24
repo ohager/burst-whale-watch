@@ -1,8 +1,14 @@
 import * as blessed from "neo-blessed"
 import {View} from "./view";
 import {author, version} from "../../package.json";
-import {selectGetTotalBalance, selectIsLoading} from "../state/selectors";
+import {
+    selectGetBtcBurst,
+    selectGetTotalBalance, selectGetUsdBtc,
+    selectIsLoadingBRS,
+    selectIsLoadingExchange
+} from "../state/selectors";
 
+const LOADING_TEXT = '(loading...)';
 
 export class HeaderView implements View {
     private readonly box: any;
@@ -57,34 +63,45 @@ export class HeaderView implements View {
 
     }
 
-    get element() { return this.box; }
+    get element() {
+        return this.box;
+    }
 
-    public update(state:any) {
+    public update(state: any) {
 
         this.updateLeft(state);
         this.updateRight(state);
     }
 
-    public updateRight(state:any) {
+    public updateRight(state: any) {
         let target = this.rightText;
-        target.setLine(0, `BTC/BURST: ...`);
-        target.setLine(1, `BTC/USD: ...`);
-        target.setLine(2, `BTC/EUR: ...`);
+        const isLoading = selectIsLoadingExchange(state);
+
+        if (isLoading) {
+            target.setLine(0, `BTC/BURST: ${LOADING_TEXT}`);
+            target.setLine(1, `USD/BTC: ${LOADING_TEXT}`);
+            return;
+        }
+
+        const btcBurst = selectGetBtcBurst(state);
+        const usdBtc = selectGetUsdBtc(state);
+
+        target.setLine(0, `BTC/BURST: ${btcBurst}`);
+        target.setLine(1, `USD/BTC: ${usdBtc}`);
     }
 
-    private updateLeft(state:any) {
-        let line = 0;
+    private updateLeft(state: any) {
         let target = this.leftText;
+        const isLoading = selectIsLoadingBRS(state);
 
-        const isLoading = selectIsLoading(state);
+        if (isLoading) {
+            target.setLine(0, `Total: ${LOADING_TEXT}`);
+            return;
+        }
 
-        if(isLoading){
-            target.setLine(line, `Total: (loading...)`);
-        }
-        else{
-            const totalBalance = selectGetTotalBalance(state);
-            target.setLine(line, `Total: ${totalBalance} BURST`);
-        }
+        const totalBalance = selectGetTotalBalance(state);
+        target.setLine(0, `Total: ${totalBalance} BURST`);
+
     }
 
 

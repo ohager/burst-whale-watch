@@ -17,8 +17,12 @@ export abstract class Collector{
     }
 
     protected update(fieldName:string, data:any){
+        const fieldState = this.store.get()[fieldName];
         this.store.update( () => ({
-            [fieldName]: data
+            [fieldName]: {
+                ...fieldState,
+                ...data
+            }
         }))
     }
 }
