@@ -9,8 +9,7 @@ import {
     selectIsLoadingBRS,
     selectIsLoadingExchange
 } from "../state/selectors";
-
-const LOADING_TEXT = '(loading...)';
+import {LOADING_TEXT} from "../constants";
 
 export class HeaderView implements View {
     private readonly box: any;

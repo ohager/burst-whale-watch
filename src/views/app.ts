@@ -5,6 +5,7 @@ import {BrsCollector} from "../collectors/brs.collector";
 import {Config} from "../config";
 import {Store} from "../../typings/stappo/store";
 import {PoloniexCollector} from "../collectors/poloniex.collector";
+import {AccountListView} from "./accountList.view";
 
 
 export class ExchangeData{
@@ -23,8 +24,8 @@ export class ExchangeData{
 const getInitialState = () => ({
     brs: {
         isLoading: true,
-        total: null,
-        accounts: null,
+        total: "",
+        accounts:{},
     },
     exchange: {
         isLoading: true,
@@ -53,6 +54,7 @@ export class App {
         this.poloniexCollector = new PoloniexCollector(this.store);
 
         this.scene.addView("header", new HeaderView());
+        this.scene.addView("accountList", new AccountListView(this.config));
     }
 
     public start(onExit) {

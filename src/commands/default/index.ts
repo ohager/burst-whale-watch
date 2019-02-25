@@ -12,8 +12,8 @@ exports.handler = async () => {
 
     const config = await Config.load();
     const app = new App(config);
-    app.start(() => {
-        console.log('Exit');
+    app.start((props) => {
+        console.log('Exit', props);
     })
 
 };
