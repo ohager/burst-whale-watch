@@ -1,9 +1,11 @@
+import chalk from "chalk"
 import * as blessed from "neo-blessed"
 import {View} from "./view";
 import {author, version} from "../../package.json";
 import {
-    selectGetBtcBurst,
-    selectGetTotalBalance, selectGetUsdBtc,
+    selectGetBalanceInBtc, selectGetBalanceInUsd,
+    selectGetBtcBurst, selectGetBtcBurstChange,
+    selectGetTotalBalance, selectGetUsdBtc, selectGetUsdBtcChange,
     selectIsLoadingBRS,
     selectIsLoadingExchange
 } from "../state/selectors";
@@ -73,6 +75,18 @@ export class HeaderView implements View {
         this.updateRight(state);
     }
 
+    private formatChangeText(changeValue: string){
+        let formatted;
+        if(changeValue.indexOf('-') >= -1){
+            formatted = chalk.redBright(changeValue.replace('-', '↓ '))
+        }
+        else{
+            formatted = chalk.greenBright('↑ ' + changeValue)
+        }
+
+        return formatted + '%'
+    }
+
     public updateRight(state: any) {
         let target = this.rightText;
         const isLoading = selectIsLoadingExchange(state);
@@ -84,10 +98,12 @@ export class HeaderView implements View {
         }
 
         const btcBurst = selectGetBtcBurst(state);
+        const btcBurstChange = selectGetBtcBurstChange(state);
         const usdBtc = selectGetUsdBtc(state);
+        const usdBtcChange = selectGetUsdBtcChange(state);
 
-        target.setLine(0, `BTC/BURST: ${btcBurst}`);
-        target.setLine(1, `USD/BTC: ${usdBtc}`);
+        target.setLine(0, `BTC/BURST: ${btcBurst} ${this.formatChangeText(btcBurstChange)}`);
+        target.setLine(1, `USD/BTC: ${usdBtc} ${this.formatChangeText(usdBtcChange)}`);
     }
 
     private updateLeft(state: any) {
@@ -95,12 +111,18 @@ export class HeaderView implements View {
         const isLoading = selectIsLoadingBRS(state);
 
         if (isLoading) {
-            target.setLine(0, `Total: ${LOADING_TEXT}`);
+            target.setLine(0, `Total [BURST]: ${LOADING_TEXT}`);
+            target.setLine(1, `Total [BTC]: ${LOADING_TEXT}`);
+            target.setLine(2, `Total [USD]: ${LOADING_TEXT}`);
             return;
         }
 
         const totalBalance = selectGetTotalBalance(state);
-        target.setLine(0, `Total: ${totalBalance} BURST`);
+        const totalBalanceBtc = selectGetBalanceInBtc(state);
+        const totalBalanceUsd = selectGetBalanceInUsd(state);
+        target.setLine(0, `Total [BURST]: ${totalBalance}`);
+        target.setLine(1, `Total [BTC]: ${totalBalanceBtc}`);
+        target.setLine(2, `Total [USD]: ${totalBalanceUsd}`);
 
     }
 

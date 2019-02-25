@@ -6,6 +6,20 @@ import {Config} from "../config";
 import {Store} from "../../typings/stappo/store";
 import {PoloniexCollector} from "../collectors/poloniex.collector";
 
+
+export class ExchangeData{
+    public last: "";
+    public lowestAsk: "";
+    public highestBid: "";
+    public percentChange: "";
+    public baseVolume: "";
+    public quoteVolume: "";
+    public isFrozen: "";
+    public high24hr: "";
+    public low24hr: ""
+}
+
+
 const getInitialState = () => ({
     brs: {
         isLoading: true,
@@ -14,8 +28,8 @@ const getInitialState = () => ({
     },
     exchange: {
         isLoading: true,
-        BTC_BURST: null,
-        USD_BTC: null,
+        BTC_BURST: new ExchangeData(),
+        USD_BTC: new ExchangeData(),
     }
 });
 

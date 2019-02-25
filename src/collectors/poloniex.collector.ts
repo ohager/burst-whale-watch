@@ -1,7 +1,7 @@
-import {Collector} from "./collector";
-import {Store} from "../../typings/stappo/store";
-import {interval, Subscription} from "rxjs";
-import {map, mergeMap, startWith} from "rxjs/operators";
+import {Collector} from './collector';
+import {Store} from '../../typings/stappo/store';
+import {interval, Subscription} from 'rxjs';
+import {map, mergeMap, startWith} from 'rxjs/operators';
 import {HttpImpl, Http, HttpResponse} from '@burstjs/http'
 
 const fetchTicker = async (httpClient: Http): Promise<HttpResponse> =>
