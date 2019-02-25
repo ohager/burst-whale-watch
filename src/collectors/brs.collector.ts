@@ -1,6 +1,6 @@
 import {interval, Subscription} from "rxjs"
 import {mergeMap, map, startWith} from "rxjs/operators"
-import {Api, Balance, composeApi} from "@burstjs/core";
+import {Api, Balance, composeApi, TransactionList} from "@burstjs/core";
 import {convertNQTStringToNumber} from "@burstjs/util";
 import {Collector} from "./collector";
 import {Store} from "../../typings/stappo/store";
@@ -30,8 +30,14 @@ const addTotalSum = (accountBalances:any) => {
     }
 };
 
+const fetchTransactions = async (api: Api, accounts: Array<string>): Promise<TransactionList[]> => (
+    Promise.all(accounts.map( accountId => api.account.getAccountTransactions(accountId, 0, 25)))
+);
+
+
 export class BrsCollector extends Collector{
-    private intervalSubscription: Subscription;
+    private balancesSubscription: Subscription;
+    private transactionsSubscription: Subscription;
     private api: Api;
 
     constructor(store:Store, private config: Config) {
@@ -42,11 +48,9 @@ export class BrsCollector extends Collector{
         })
     }
 
-    protected onStart() {
-
+    private pollBalances(){
         const {accounts} = this.config;
-
-        this.intervalSubscription = interval(10 * 1000).pipe(
+        this.balancesSubscription = interval(1 * 1000).pipe(
             startWith(0),
             mergeMap(() => fetchBalances(this.api, accounts)),
             map( mapBalancesToAccounts(accounts) ),
@@ -59,8 +63,31 @@ export class BrsCollector extends Collector{
         });
     }
 
+    private pollTransactions(){
+        const {accounts} = this.config;
+        this.transactionsSubscription = interval(1 * 1000).pipe(
+            startWith(0),
+            mergeMap(() => fetchTransactions(this.api, accounts)),
+            // map( mapBalancesToAccounts(accounts) ),
+            // map( addTotalSum )
+        ).subscribe((data) => {
+            this.update( 'brs', {
+                transactions: {
+                    ...data
+                },
+                isLoading:false,
+            } );
+        });
+    }
+
+    protected onStart() {
+        this.pollBalances();
+        this.pollTransactions();
+    }
+
     protected onStop() {
-        this.intervalSubscription.unsubscribe();
+        this.balancesSubscription.unsubscribe();
+        this.transactionsSubscription.unsubscribe();
     }
 
 }

@@ -1,3 +1,6 @@
+// app
+export const selectCurrentAccountIndex = (state:any): number => state.app.currentAccountIndex;
+
 // brs
 export const selectGetAccounts = (state: any): any => state.brs.accounts;
 export const selectGetTotalBalance = (state: any): string => state.brs.total.toFixed(3);

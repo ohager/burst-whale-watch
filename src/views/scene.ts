@@ -1,6 +1,9 @@
 import * as blessed from "neo-blessed";
 import {version} from "../../package.json"
 import {View} from "./view";
+import {Store} from "../../typings/stappo/store";
+import {Config} from "../config";
+import {selectCurrentAccountIndex} from "../state/selectors";
 
 export interface ExitEvent {
     readonly reason: string;
@@ -10,14 +13,15 @@ export interface ExitEvent {
 export class Scene {
     private autoCloseInterval: NodeJS.Timeout;
     private views: {};
-    private onExitFn: (e:ExitEvent) => void;
+    private onExitFn: (e: ExitEvent) => void;
     private readonly screen: any;
     private quitDialog: any;
 
-    constructor() {
+    constructor(private store: Store, private config: Config) {
         this.autoCloseInterval = null;
         this.views = {};
-        this.onExitFn = () => {};
+        this.onExitFn = () => {
+        };
 
         this.screen = blessed.screen({
                 smartCSR: true,
@@ -37,11 +41,38 @@ export class Scene {
             this.showQuitDialog()
         });
 
+        // this.screen.key('left', this.scrollLeft.bind(this));
+        // this.screen.key('right', this.scrollRight.bind(this));
+
         process.once('unhandledRejection', (e) => {
             this.__handleException(e)
         });
-
     }
+
+    private scrollRight() {
+        const index = selectCurrentAccountIndex(this.store.get());
+        this.store.update((prevState) => ({
+                app: {
+                    ...prevState.app,
+                    currentAccountIndex: Math.min(this.config.accounts.length - 1, index + 1)
+
+                }
+            })
+        );
+    }
+
+    private scrollLeft() {
+        const index = selectCurrentAccountIndex(this.store.get());
+        this.store.update((prevState) => ({
+                app: {
+                    ...prevState.app,
+                    currentAccountIndex: Math.max(0, index - 1)
+
+                }
+            })
+        );
+    }
+
 
     showQuitDialog() {
 
@@ -92,7 +123,7 @@ export class Scene {
         this.screen.render();
     }
 
-    public addView(name:string, view:View) {
+    public addView(name: string, view: View) {
         this.screen.append(view.element);
         this.views[name] = view;
     }
@@ -101,7 +132,7 @@ export class Scene {
         return this.views[name];
     }
 
-    public render(state:any) {
+    public render(state: any) {
         try {
             Object.getOwnPropertyNames(this.views).forEach(p => {
                 this.views[p].update(state);

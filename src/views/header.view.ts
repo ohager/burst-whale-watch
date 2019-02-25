@@ -76,7 +76,7 @@ export class HeaderView implements View {
 
     private formatChangeText(changeValue: string){
         let formatted;
-        if(changeValue.indexOf('-') >= -1){
+        if(changeValue.indexOf('-') > -1){
             formatted = chalk.redBright(changeValue.replace('-', '↓ '))
         }
         else{

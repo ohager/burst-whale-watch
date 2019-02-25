@@ -22,6 +22,9 @@ export class ExchangeData{
 
 
 const getInitialState = () => ({
+    app:{
+        currentAccountIndex: 0
+    },
     brs: {
         isLoading: true,
         total: "",
@@ -36,7 +39,7 @@ const getInitialState = () => ({
 
 
 export class App {
-    private scene: Scene = new Scene();
+    private scene: Scene;
     private brsCollector: BrsCollector;
     private poloniexCollector: PoloniexCollector;
     private storeListenerId: number;
@@ -47,6 +50,8 @@ export class App {
 
     private initialize() {
         this.store = new Stappo();
+        this.scene = new Scene(this.store, this.config);
+
         this.store.update(getInitialState);
         this.storeListenerId = this.store.listen(this.scene.render.bind(this.scene));
 
@@ -54,7 +59,7 @@ export class App {
         this.poloniexCollector = new PoloniexCollector(this.store);
 
         this.scene.addView("header", new HeaderView());
-        this.scene.addView("accountList", new AccountListView(this.config));
+        //this.scene.addView("accountList", new AccountListView(this.config));
     }
 
     public start(onExit) {

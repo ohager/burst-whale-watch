@@ -82,8 +82,9 @@ export class AccountView implements View {
 
         let startLine = 1;
         this.box.setLabel({text: `{bold}${address}{/}`, side: 'left'});
-        this.text.setLine(startLine, ` Account Id: ${accountData.id}`);
+        this.text.setLine(startLine, ` Account: ${accountData.id}`);
         this.text.setLine(++startLine, ` Total [BURST]: ${balanceBurst}`);
+
     }
 
     public update(state: any) {}
