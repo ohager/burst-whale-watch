@@ -42,12 +42,18 @@ export class Scene {
             this.showQuitDialog()
         });
 
+        this.screen.key('s', this.printState.bind(this));
         this.screen.key('left', this.scrollLeft.bind(this));
         this.screen.key('right', this.scrollRight.bind(this));
 
         process.once('unhandledRejection', (e) => {
             this.__handleException(e)
         });
+    }
+
+
+    private printState(){
+        console.log(this.store.get())
     }
 
     private scrollRight() {

@@ -3,6 +3,7 @@ import {Store} from '../../typings/stappo/store';
 import {interval, Subscription} from 'rxjs';
 import {map, mergeMap, startWith} from 'rxjs/operators';
 import {HttpImpl, Http, HttpResponse} from '@burstjs/http'
+import {EXCHANGE_POLLING_SEC} from "../constants";
 
 const fetchTicker = async (httpClient: Http): Promise<HttpResponse> =>
     await httpClient.get('/public?command=returnTicker');
@@ -25,7 +26,7 @@ export class PoloniexCollector extends Collector {
     }
 
     private subscribeTicker() {
-        this.subscription = interval(10 * 1000)
+        this.subscription = interval(EXCHANGE_POLLING_SEC * 1000)
             .pipe(
                 startWith(0),
                 mergeMap(() => fetchTicker(this.http)),

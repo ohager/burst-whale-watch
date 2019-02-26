@@ -5,14 +5,13 @@ import {convertNQTStringToNumber} from "@burstjs/util";
 import {Collector} from "./collector";
 import {Store} from "../../typings/stappo/store";
 import {Config} from "../config";
-
-const POLLING_INTERVAL = 4 * 60 * 1000;
+import {BRS_POLLING_SEC} from "../constants";
 
 const fetchBalances = async (api: Api, accounts: Array<string>): Promise<Balance[]> => (
     Promise.all(accounts.map(api.account.getAccountBalance))
 );
 
-const mapBalancesToAccounts = (accounts: Array<string>) => (balances: Array<Balance>) => (
+const mapBalancesToAccounts = (accounts: Array<string>) => (balances: Balance[]) => (
     accounts.reduce( (prev, accountId, index) => ({
         ...prev,
         [accountId]: balances[index].balanceNQT
@@ -25,7 +24,7 @@ const addTotalSum = (accountBalances:any) => {
     , 0);
 
     return {
-        accounts: {
+        balances: {
             ...accountBalances,
         },
         total
@@ -36,6 +35,12 @@ const fetchTransactions = async (api: Api, accounts: Array<string>): Promise<Tra
     Promise.all(accounts.map( accountId => api.account.getAccountTransactions(accountId, 0, 25)))
 );
 
+const mapTransactionsToAccounts = (accounts: Array<string>) => (transactionLists: TransactionList[]) => (
+    accounts.reduce( (prev, accountId, index) => ({
+        ...prev,
+        [accountId]: transactionLists[index].transactions
+    }) , {})
+);
 
 export class BrsCollector extends Collector{
     private balancesSubscription: Subscription;
@@ -52,7 +57,7 @@ export class BrsCollector extends Collector{
 
     private pollBalances(){
         const {accounts} = this.config;
-        this.balancesSubscription = interval(POLLING_INTERVAL).pipe(
+        this.balancesSubscription = interval(BRS_POLLING_SEC * 1000).pipe(
             startWith(0),
             mergeMap(() => fetchBalances(this.api, accounts)),
             map( mapBalancesToAccounts(accounts) ),
@@ -67,17 +72,17 @@ export class BrsCollector extends Collector{
 
     private pollTransactions(){
         const {accounts} = this.config;
-        this.transactionsSubscription = interval(POLLING_INTERVAL).pipe(
+        this.transactionsSubscription = interval(BRS_POLLING_SEC * 1000).pipe(
             startWith(0),
             mergeMap(() => fetchTransactions(this.api, accounts)),
-            // map( mapBalancesToAccounts(accounts) ),
+            map( mapTransactionsToAccounts(accounts) ),
             // map( addTotalSum )
         ).subscribe((data) => {
             this.update( 'brs', {
                 transactions: {
-                    ...data
-                },
-                isLoading:false,
+                    ...data,
+                    isLoading:false
+                }
             } );
         });
     }

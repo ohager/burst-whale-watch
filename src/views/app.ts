@@ -28,7 +28,8 @@ const getInitialState = () => ({
     brs: {
         isLoading: true,
         total: "",
-        accounts:{},
+        balances:{},
+        transactions:{},
     },
     exchange: {
         name: 'poloniex.com',
