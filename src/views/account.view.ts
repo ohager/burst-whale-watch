@@ -6,6 +6,7 @@ import {
 import {Transaction} from "@burstjs/core";
 import {convertNumericIdToAddress, convertNQTStringToNumber} from "@burstjs/util";
 import {LOADING_TEXT} from "../constants";
+import {TransactionTableView} from "./transactionTable.view";
 
 export interface AccountData {
     index: number,
@@ -17,6 +18,7 @@ export interface AccountData {
 export class AccountView implements View {
     private readonly box: any;
     private readonly text: any;
+    private transactionTable: TransactionTableView;
 
     constructor(parentView: any, index:number, total:number) {
 
@@ -28,7 +30,7 @@ export class AccountView implements View {
             top: 2,
             left,
             width: `${width}%-4`,
-            height: 10,
+            height: '80%',
             tags: true,
             label: {text: `{bold}${LOADING_TEXT}{/}`, side: 'left'},
             border: {
@@ -63,13 +65,14 @@ export class AccountView implements View {
             left: 0,
         });
 
+        this.transactionTable = new TransactionTableView(this.box)
     }
 
     get element() {
         return this.box;
     }
 
-    public updateView(state:any, accountData:AccountData){
+    public update(state:any, accountData:AccountData){
 
         const isLoading = selectIsLoadingExchange(state);
 
@@ -85,8 +88,9 @@ export class AccountView implements View {
         this.text.setLine(startLine, ` Account: ${accountData.id}`);
         this.text.setLine(++startLine, ` Total [BURST]: ${balanceBurst}`);
 
-    }
 
-    public update(state: any) {}
+        this.transactionTable.update(state, accountData.transactions);
+
+    }
 
 }

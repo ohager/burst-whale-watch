@@ -26,6 +26,8 @@ export class Scene {
 
         this.screen = blessed.screen({
                 smartCSR: true,
+                autoPadding: true,
+                fullUnicode: true,
                 title: `BURST Whale Watcher ${version}`,
                 cursor: {
                     artificial: true,
@@ -51,9 +53,8 @@ export class Scene {
         });
     }
 
-
-    private printState(){
-        console.log(this.store.get())
+    private printState() {
+        console.debug(this.store.get());
     }
 
     private scrollRight() {
@@ -62,7 +63,6 @@ export class Scene {
                 app: {
                     ...prevState.app,
                     currentAccountIndex: Math.min(this.config.accounts.length - MAX_VISIBLE_ACCOUNTS, index + 1)
-
                 }
             })
         );
@@ -74,7 +74,6 @@ export class Scene {
                 app: {
                     ...prevState.app,
                     currentAccountIndex: Math.max(0, index - 1)
-
                 }
             })
         );

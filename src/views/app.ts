@@ -25,17 +25,20 @@ const getInitialState = () => ({
     app:{
         currentAccountIndex: 0,
     },
-    brs: {
-        isLoading: true,
+    balances:{
         total: "",
-        balances:{},
-        transactions:{},
+        isLoading: true,
+        accounts: {}
+    },
+    transactions:{
+        isLoading: true,
+        accounts: {}
     },
     exchange: {
         name: 'poloniex.com',
         isLoading: true,
         BTC_BURST: new ExchangeData(),
-        USD_BTC: new ExchangeData(),
+        USDT_BTC: new ExchangeData(),
     }
 });
 

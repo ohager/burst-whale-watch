@@ -12,42 +12,40 @@ const fetchBalances = async (api: Api, accounts: Array<string>): Promise<Balance
 );
 
 const mapBalancesToAccounts = (accounts: Array<string>) => (balances: Balance[]) => (
-    accounts.reduce( (prev, accountId, index) => ({
+    accounts.reduce((prev, accountId, index) => ({
         ...prev,
         [accountId]: balances[index].balanceNQT
-    }) , {})
+    }), {})
 );
 
-const addTotalSum = (accountBalances:any) => {
-    const total = Object.keys(accountBalances).reduce( (totalBalance, accountId) =>
-                  totalBalance + convertNQTStringToNumber(accountBalances[accountId])
-    , 0);
+const addTotalSum = (accountBalances: any) => {
+    const total = Object.keys(accountBalances).reduce((totalBalance, accountId) =>
+        totalBalance + convertNQTStringToNumber(accountBalances[accountId])
+        , 0);
 
     return {
-        balances: {
-            ...accountBalances,
-        },
-        total
+        accounts: {...accountBalances},
+        total,
     }
 };
 
 const fetchTransactions = async (api: Api, accounts: Array<string>): Promise<TransactionList[]> => (
-    Promise.all(accounts.map( accountId => api.account.getAccountTransactions(accountId, 0, 25)))
+    Promise.all(accounts.map(accountId => api.account.getAccountTransactions(accountId, 0, 25)))
 );
 
 const mapTransactionsToAccounts = (accounts: Array<string>) => (transactionLists: TransactionList[]) => (
-    accounts.reduce( (prev, accountId, index) => ({
+    accounts.reduce((prev, accountId, index) => ({
         ...prev,
         [accountId]: transactionLists[index].transactions
-    }) , {})
+    }), {})
 );
 
-export class BrsCollector extends Collector{
+export class BrsCollector extends Collector {
     private balancesSubscription: Subscription;
     private transactionsSubscription: Subscription;
     private api: Api;
 
-    constructor(store:Store, private config: Config) {
+    constructor(store: Store, private config: Config) {
         super(store);
         this.api = composeApi({
             nodeHost: config.peer,
@@ -55,35 +53,33 @@ export class BrsCollector extends Collector{
         })
     }
 
-    private pollBalances(){
+    private pollBalances() {
         const {accounts} = this.config;
         this.balancesSubscription = interval(BRS_POLLING_SEC * 1000).pipe(
             startWith(0),
             mergeMap(() => fetchBalances(this.api, accounts)),
-            map( mapBalancesToAccounts(accounts) ),
-            map( addTotalSum )
+            map(mapBalancesToAccounts(accounts)),
+            map(addTotalSum)
         ).subscribe((data) => {
-            this.update( 'brs', {
+            this.update('balances', {
                 ...data,
-                isLoading:false,
-            } );
+                isLoading: false,
+            });
         });
     }
 
-    private pollTransactions(){
+    private pollTransactions() {
         const {accounts} = this.config;
         this.transactionsSubscription = interval(BRS_POLLING_SEC * 1000).pipe(
             startWith(0),
             mergeMap(() => fetchTransactions(this.api, accounts)),
-            map( mapTransactionsToAccounts(accounts) ),
+            map(mapTransactionsToAccounts(accounts)),
             // map( addTotalSum )
         ).subscribe((data) => {
-            this.update( 'brs', {
-                transactions: {
-                    ...data,
-                    isLoading:false
-                }
-            } );
+            this.update('transactions', {
+                accounts: {...data},
+                isLoading: false
+            });
         });
     }
 

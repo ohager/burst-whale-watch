@@ -1,7 +1,7 @@
 import * as blessed from "neo-blessed"
 import {View} from "./view";
 import {
-    selectIsLoadingExchange
+    selectIsLoadingTransactions
 } from "../state/selectors";
 import {Transaction} from "@burstjs/core";
 import {convertNumericIdToAddress, convertNQTStringToNumber} from "@burstjs/util";
@@ -14,77 +14,101 @@ export interface AccountData {
 }
 
 export class TransactionTableView implements View {
-    private readonly box: any;
-    private readonly text: any;
+    private readonly table: any;
+    private loadingText: any;
+    private titleText: any;
 
-    constructor(parentView: any, index:number, total:number) {
+    constructor(parentView: any) {
 
-        const width = 100/total;
-        const left = `${index*width}%+1`;
-
-        this.box = blessed.box({
-            parent:parentView,
-            top: 0,
-            left,
-            width: `${width}%-4`,
-            height: 10,
-            tags: true,
-            label: {text: `{bold}${LOADING_TEXT}{/}`, side: 'left'},
-            border: {
-                type: 'line'
-            },
-            style: {
-                bg: 'black',
-                border: {
-                    fg: 'white',
-                    bold: true,
-                },
-            }
-        });
-
-        const textBaseSettings = {
-            parent: this.box,
-            top: 0,
-            width: '100%-2',
+        this.loadingText = blessed.text({
+            parent: parentView,
+            top: 'center',
+            left: 'center',
             tags: true,
             style: {
-                fg: 'white',
+                fg: 'gray',
                 bold: true,
                 bg: 'black',
                 border: {
                     fg: '#ffffff'
                 },
             }
-        };
-
-        this.text = blessed.text({
-            ...textBaseSettings,
-            left: 0,
         });
 
+
+        this.titleText = blessed.text({
+            parent: parentView,
+            top: 3,
+            right: 0,
+            tags: true,
+            style: {
+                fg: 'gray',
+                bold: true,
+                bg: 'black',
+                border: {
+                    fg: '#ffffff'
+                },
+            }
+        });
+
+        this.table = blessed.table({
+            parent: parentView,
+            top: 4,
+            left: 'center',
+            data: null,
+            border: 'line',
+            align: 'center',
+            tags: true,
+            width: '100%-2',
+            style: {
+                border: {
+                    fg: 'white'
+                },
+                header: {
+                    fg: 'white',
+                    bold: true
+                },
+                cell: {
+                    fg: 'white'
+                }
+            }
+        });
+
+        this.table.hide();
     }
 
     get element() {
-        return this.box;
+        return this.table;
     }
 
-    public updateView(state:any, accountData:AccountData){
+    public update(state: any, transactions: Transaction[]) {
+        const isLoading = selectIsLoadingTransactions(state);
 
-        const isLoading = selectIsLoadingExchange(state);
-
-        if (isLoading || !accountData) {
+        if(isLoading){
+            this.loadingText.setLine(0,LOADING_TEXT);
+            this.loadingText.show();
+            this.titleText.hide();
+            this.table.hide();
             return;
         }
+        this.loadingText.hide();
 
-        const address = convertNumericIdToAddress(accountData.id);
-        const balanceBurst = convertNQTStringToNumber(accountData.balance).toFixed(3);
+        this.titleText.setLine(0,'Most recent transactions');
+        this.titleText.show();
 
-        let startLine = 1;
-        this.box.setLabel({text: `{bold}${address}{/}`, side: 'left'});
-        this.text.setLine(startLine, ` Account Id: ${accountData.id}`);
-        this.text.setLine(++startLine, ` Total [BURST]: ${balanceBurst}`);
+        this.table.show();
+
+        let data = [
+            ['Id', 'Date', 'Amount', 'Receiver/Sender'],
+            ['Elephant', 'Apple', '1:00am', 'One'],
+            ['Bird', 'Orange', '2:15pm', 'Two'],
+            ['T-Rex', 'Taco', '8:45am', 'Three'],
+            ['Mouse', 'Cheese', '9:05am', 'Four']
+        ];
+
+        data[1][0] = '{red-fg}' + data[1][0] + '{/red-fg}';
+
+        this.table.setData(data);
     }
-
-    public update(state: any) {}
 
 }

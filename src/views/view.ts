@@ -1,4 +1,4 @@
 export interface View {
     readonly element: View;
-    update(state:any): void;
+    update(state:any, ...props:any): void;
 }

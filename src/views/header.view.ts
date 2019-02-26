@@ -7,7 +7,7 @@ import {
     selectGetBalanceInBtc, selectGetBalanceInUsd,
     selectGetBtcBurst, selectGetBtcBurstChange,
     selectGetTotalBalance, selectGetUsdBtc, selectGetUsdBtcChange,
-    selectIsLoadingBRS,
+    selectIsLoadingBalances,
     selectIsLoadingExchange
 } from "../state/selectors";
 import {LOADING_TEXT} from "../constants";
@@ -75,7 +75,7 @@ export class HeaderView implements View {
         this.updateRight(state);
     }
 
-    private formatChangeText(changeValue: string){
+    private static formatChangeText(changeValue: string){
         let formatted;
         if(changeValue.indexOf('-') > -1){
             formatted = chalk.redBright(changeValue.replace('-', '↓ '))
@@ -103,14 +103,14 @@ export class HeaderView implements View {
         const usdBtc = selectGetUsdBtc(state);
         const usdBtcChange = selectGetUsdBtcChange(state);
 
-        target.setLine(0, `BTC/BURST: ${btcBurst} ${this.formatChangeText(btcBurstChange)}`);
-        target.setLine(1, `USD/BTC: ${usdBtc} ${this.formatChangeText(usdBtcChange)}`);
+        target.setLine(0, `BTC/BURST: ${btcBurst} ${HeaderView.formatChangeText(btcBurstChange)}`);
+        target.setLine(1, `USD/BTC: ${usdBtc} ${HeaderView.formatChangeText(usdBtcChange)}`);
         target.setLine(2, chalk.gray(`Source: ${exchangeName}`));
     }
 
     private updateLeft(state: any) {
         let target = this.leftText;
-        const isLoading = selectIsLoadingBRS(state);
+        const isLoading = selectIsLoadingBalances(state);
 
         if (isLoading) {
             target.setLine(0, `Total [BURST]: ${LOADING_TEXT}`);

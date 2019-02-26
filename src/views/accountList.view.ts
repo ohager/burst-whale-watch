@@ -2,7 +2,7 @@ import * as blessed from "neo-blessed"
 import {View} from "./view";
 import {AccountData, AccountView} from "./account.view";
 import {Config} from "../config";
-import {selectCurrentAccountIndex, selectGetBalances} from "../state/selectors";
+import {selectCurrentAccountIndex, selectGetAccountBalances} from "../state/selectors";
 import {MAX_VISIBLE_ACCOUNTS} from "../constants";
 
 export class AccountListView implements View {
@@ -15,7 +15,7 @@ export class AccountListView implements View {
             top: 7,
             left: 'center',
             width: '100%',
-            height: 20,
+            height: '80%',
             tags: true,
             label: {text: `{bold}Accounts{/}`, side: 'left'},
             border: {
@@ -46,10 +46,11 @@ export class AccountListView implements View {
         return this.box;
     }
 
-    private createAccountViewData(state: any): AccountData[] {
+    private mapAccountViewData(state: any): AccountData[] {
         const currentAccountIndex = selectCurrentAccountIndex(state);
 
-        const accountsMap = selectGetBalances(state);
+        const accountsMap = selectGetAccountBalances(state);
+
         const accountsArray = Object
             .keys(accountsMap)
             .map(accountId => ({
@@ -74,13 +75,11 @@ export class AccountListView implements View {
         const currentAccountIndex = selectCurrentAccountIndex(state);
         let line;
 
-        if(currentAccountIndex === 0 && MAX_VISIBLE_ACCOUNTS < this.numberOfAccounts){
+        if (currentAccountIndex === 0 && MAX_VISIBLE_ACCOUNTS < this.numberOfAccounts) {
             line = ' '.repeat(this.box.width - 5) + '->'
-        }
-        else if(0 < currentAccountIndex && currentAccountIndex < this.numberOfAccounts - MAX_VISIBLE_ACCOUNTS){
+        } else if (0 < currentAccountIndex && currentAccountIndex < this.numberOfAccounts - MAX_VISIBLE_ACCOUNTS) {
             line = ' <-' + ' '.repeat(this.box.width - 8) + '->'
-        }
-        else if(0 < currentAccountIndex ){
+        } else if (0 < currentAccountIndex) {
             line = ' <-' + ' '.repeat(this.box.width - 4)
         }
 
@@ -88,11 +87,11 @@ export class AccountListView implements View {
     }
 
     public update(state: any) {
-        const accountData = this.createAccountViewData(state);
+        const accountData = this.mapAccountViewData(state);
         this.renderNavArrows(state);
 
         this.accountViews.forEach((view, i) => {
-            view.updateView(state, accountData[i]);
+            view.update(state, accountData[i]);
         });
 
     }

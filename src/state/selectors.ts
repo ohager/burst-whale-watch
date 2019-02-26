@@ -1,11 +1,14 @@
 // app
 export const selectCurrentAccountIndex = (state:any): number => state.app.currentAccountIndex;
 
-// brs
-export const selectGetTransactions = (state: any): any => state.brs.transactions;
-export const selectGetBalances = (state: any): any => state.brs.balances;
-export const selectGetTotalBalance = (state: any): string => state.brs.total.toFixed(3);
-export const selectIsLoadingBRS = (state: any): boolean => state.brs.isLoading;
+// balances
+export const selectGetAccountBalances = (state: any): any => state.balances.accounts;
+export const selectGetTotalBalance = (state: any): string => state.balances.total.toFixed(3);
+export const selectIsLoadingBalances = (state: any): boolean => state.balances.isLoading;
+
+// transactions
+export const selectGetAccountTransactions = (state: any): any => state.transactions.accounts;
+export const selectIsLoadingTransactions = (state: any): boolean => state.transactions.isLoading;
 
 //exchange
 export const selectGetUsdBtc = (state: any): string =>
@@ -15,15 +18,13 @@ export const selectGetBtcBurstChange = (state: any): string =>
     Number.parseFloat(state.exchange.BTC_BURST.percentChange).toFixed(4);
 export const selectGetUsdBtcChange = (state: any): string =>
     Number.parseFloat(state.exchange.USDT_BTC.percentChange).toFixed(4);
-
-
 export const selectIsLoadingExchange = (state: any): boolean => state.exchange.isLoading;
 export const selectExchangeName = (state: any): string => state.exchange.name;
 
 export const selectGetBalanceInBtc = (state: any): string => {
 
     if (selectIsLoadingExchange(state)
-        || selectIsLoadingBRS(state)
+        || selectIsLoadingBalances(state)
     ) {
         return null;
     }
@@ -34,11 +35,10 @@ export const selectGetBalanceInBtc = (state: any): string => {
     return (totalBurst * btcBurst).toFixed(4);
 };
 
-
 export const selectGetBalanceInUsd = (state: any): string => {
 
     if (selectIsLoadingExchange(state)
-        || selectIsLoadingBRS(state)
+        || selectIsLoadingBalances(state)
     ) {
         return null;
     }
