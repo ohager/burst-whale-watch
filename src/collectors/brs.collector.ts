@@ -6,6 +6,8 @@ import {Collector} from "./collector";
 import {Store} from "../../typings/stappo/store";
 import {Config} from "../config";
 
+const POLLING_INTERVAL = 4 * 60 * 1000;
+
 const fetchBalances = async (api: Api, accounts: Array<string>): Promise<Balance[]> => (
     Promise.all(accounts.map(api.account.getAccountBalance))
 );
@@ -50,7 +52,7 @@ export class BrsCollector extends Collector{
 
     private pollBalances(){
         const {accounts} = this.config;
-        this.balancesSubscription = interval(1 * 1000).pipe(
+        this.balancesSubscription = interval(POLLING_INTERVAL).pipe(
             startWith(0),
             mergeMap(() => fetchBalances(this.api, accounts)),
             map( mapBalancesToAccounts(accounts) ),
@@ -65,7 +67,7 @@ export class BrsCollector extends Collector{
 
     private pollTransactions(){
         const {accounts} = this.config;
-        this.transactionsSubscription = interval(1 * 1000).pipe(
+        this.transactionsSubscription = interval(POLLING_INTERVAL).pipe(
             startWith(0),
             mergeMap(() => fetchTransactions(this.api, accounts)),
             // map( mapBalancesToAccounts(accounts) ),

@@ -23,7 +23,7 @@ export class ExchangeData{
 
 const getInitialState = () => ({
     app:{
-        currentAccountIndex: 0
+        currentAccountIndex: 0,
     },
     brs: {
         isLoading: true,
@@ -31,6 +31,7 @@ const getInitialState = () => ({
         accounts:{},
     },
     exchange: {
+        name: 'poloniex.com',
         isLoading: true,
         BTC_BURST: new ExchangeData(),
         USD_BTC: new ExchangeData(),

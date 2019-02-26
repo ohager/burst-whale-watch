@@ -17,6 +17,7 @@ export const selectGetUsdBtcChange = (state: any): string =>
 
 
 export const selectIsLoadingExchange = (state: any): boolean => state.exchange.isLoading;
+export const selectExchangeName = (state: any): string => state.exchange.name;
 
 export const selectGetBalanceInBtc = (state: any): string => {
 

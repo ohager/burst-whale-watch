@@ -3,6 +3,7 @@ import * as blessed from "neo-blessed"
 import {View} from "./view";
 import {author, version} from "../../package.json";
 import {
+    selectExchangeName,
     selectGetBalanceInBtc, selectGetBalanceInUsd,
     selectGetBtcBurst, selectGetBtcBurstChange,
     selectGetTotalBalance, selectGetUsdBtc, selectGetUsdBtcChange,
@@ -89,6 +90,7 @@ export class HeaderView implements View {
     public updateRight(state: any) {
         let target = this.rightText;
         const isLoading = selectIsLoadingExchange(state);
+        const exchangeName = selectExchangeName(state);
 
         if (isLoading) {
             target.setLine(0, `BTC/BURST: ${LOADING_TEXT}`);
@@ -103,6 +105,7 @@ export class HeaderView implements View {
 
         target.setLine(0, `BTC/BURST: ${btcBurst} ${this.formatChangeText(btcBurstChange)}`);
         target.setLine(1, `USD/BTC: ${usdBtc} ${this.formatChangeText(usdBtcChange)}`);
+        target.setLine(2, chalk.gray(`Source: ${exchangeName}`));
     }
 
     private updateLeft(state: any) {

@@ -25,7 +25,7 @@ export class PoloniexCollector extends Collector {
     }
 
     private subscribeTicker() {
-        this.subscription = interval(5 * 1000)
+        this.subscription = interval(10 * 1000)
             .pipe(
                 startWith(0),
                 mergeMap(() => fetchTicker(this.http)),
