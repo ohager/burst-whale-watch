@@ -5,10 +5,10 @@ import {
 } from "../state/selectors";
 import {Transaction} from "@burstjs/core";
 import {convertNumericIdToAddress, convertNQTStringToNumber} from "@burstjs/util";
-
-const LOADING_TEXT = '(loading...)';
+import {LOADING_TEXT} from "../constants";
 
 export interface AccountData {
+    index: number,
     id: string,
     balance: string,
     transactions: Transaction[]
@@ -25,7 +25,7 @@ export class AccountView implements View {
 
         this.box = blessed.box({
             parent:parentView,
-            top: 0,
+            top: 2,
             left,
             width: `${width}%-4`,
             height: 10,
@@ -81,7 +81,7 @@ export class AccountView implements View {
         const balanceBurst = convertNQTStringToNumber(accountData.balance).toFixed(3);
 
         let startLine = 1;
-        this.box.setLabel({text: `{bold}${address}{/}`, side: 'left'});
+        this.box.setLabel({text: `(${accountData.index}) {bold}${address}{/}`, side: 'left'});
         this.text.setLine(startLine, ` Account: ${accountData.id}`);
         this.text.setLine(++startLine, ` Total [BURST]: ${balanceBurst}`);
 

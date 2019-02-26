@@ -3,13 +3,12 @@ import {View} from "./view";
 import {AccountData, AccountView} from "./account.view";
 import {Config} from "../config";
 import {selectCurrentAccountIndex, selectGetAccounts} from "../state/selectors";
-import {start} from "repl";
-
-const MAX_VISIBLE_ACCOUNTS = 2;
+import {MAX_VISIBLE_ACCOUNTS} from "../constants";
 
 export class AccountListView implements View {
     private readonly box: any;
     private accountViews: AccountView[] = [];
+    private numberOfAccounts: number;
 
     constructor(private config: Config) {
         this.box = blessed.box({
@@ -18,7 +17,7 @@ export class AccountListView implements View {
             width: '100%',
             height: 20,
             tags: true,
-            label: {text: `{bold}Accounts ${MAX_VISIBLE_ACCOUNTS}/${this.config.accounts.length}{/}`, side: 'left'},
+            label: {text: `{bold}Accounts{/}`, side: 'left'},
             border: {
                 type: 'line'
             },
@@ -30,6 +29,8 @@ export class AccountListView implements View {
                 },
             }
         });
+
+        this.numberOfAccounts = this.config.accounts.length;
 
         this.config.accounts.forEach((accountId, index) => {
             this.accountViews.push(new AccountView(
@@ -47,8 +48,8 @@ export class AccountListView implements View {
 
     private createAccountViewData(state: any): AccountData[] {
         const currentAccountIndex = selectCurrentAccountIndex(state);
-        const accountsMap = selectGetAccounts(state);
 
+        const accountsMap = selectGetAccounts(state);
         const accountsArray = Object
             .keys(accountsMap)
             .map(accountId => ({
@@ -58,31 +59,38 @@ export class AccountListView implements View {
             );
 
         const startIndex = currentAccountIndex;
-        const endIndex = Math.max(accountsArray.length - startIndex, startIndex + MAX_VISIBLE_ACCOUNTS);
+        const endIndex = startIndex + MAX_VISIBLE_ACCOUNTS;
         const visibleAccounts = accountsArray.slice(startIndex, endIndex);
 
-        console.log('createAccountViewData', startIndex, endIndex);
-
-        return visibleAccounts.map(account => ({
+        return visibleAccounts.map((account, i) => ({
+            index: startIndex + i + 1,
             id: account.accountId,
             balance: account.balance,
             transactions: []
         }));
     }
 
-    public update(state: any) {
+    private renderNavArrows(state: any) {
         const currentAccountIndex = selectCurrentAccountIndex(state);
+        let line;
+        if(currentAccountIndex === 0 && MAX_VISIBLE_ACCOUNTS < this.numberOfAccounts){
+            line = ' '.repeat(this.box.width - 5) + '->'
+        }
+
+        if(currentAccountIndex !== 0){
+            line = ' <-' + ' '.repeat(this.box.width - 4)
+        }
+        this.box.setLine(0, line);
+    }
+
+    public update(state: any) {
         const accountData = this.createAccountViewData(state);
+        this.renderNavArrows(state);
 
-        console.log('update', currentAccountIndex, accountData);
+        this.accountViews.forEach((view, i) => {
+            view.updateView(state, accountData[i]);
+        });
 
-        // this.accountViews.forEach((view, i) => {
-        //     const accountIndex = i + currentAccountIndex;
-        //     view.updateView(
-        //         state,
-        //         accountIndex < accountData.length ? accountData[accountIndex] : null
-        //     );
-        // });
     }
 
 }

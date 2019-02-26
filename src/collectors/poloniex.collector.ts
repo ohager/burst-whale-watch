@@ -16,7 +16,6 @@ const relevantCurrencyPairs = (data: HttpResponse): object => {
     }
 };
 
-
 export class PoloniexCollector extends Collector {
     private http = new HttpImpl('https://poloniex.com');
     private subscription: Subscription;

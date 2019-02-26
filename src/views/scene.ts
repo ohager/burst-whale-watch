@@ -4,6 +4,7 @@ import {View} from "./view";
 import {Store} from "../../typings/stappo/store";
 import {Config} from "../config";
 import {selectCurrentAccountIndex} from "../state/selectors";
+import {MAX_VISIBLE_ACCOUNTS} from "../constants";
 
 export interface ExitEvent {
     readonly reason: string;
@@ -41,8 +42,8 @@ export class Scene {
             this.showQuitDialog()
         });
 
-        // this.screen.key('left', this.scrollLeft.bind(this));
-        // this.screen.key('right', this.scrollRight.bind(this));
+        this.screen.key('left', this.scrollLeft.bind(this));
+        this.screen.key('right', this.scrollRight.bind(this));
 
         process.once('unhandledRejection', (e) => {
             this.__handleException(e)
@@ -54,7 +55,7 @@ export class Scene {
         this.store.update((prevState) => ({
                 app: {
                     ...prevState.app,
-                    currentAccountIndex: Math.min(this.config.accounts.length - 1, index + 1)
+                    currentAccountIndex: Math.min(this.config.accounts.length - MAX_VISIBLE_ACCOUNTS, index + 1)
 
                 }
             })

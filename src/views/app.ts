@@ -59,7 +59,7 @@ export class App {
         this.poloniexCollector = new PoloniexCollector(this.store);
 
         this.scene.addView("header", new HeaderView());
-        //this.scene.addView("accountList", new AccountListView(this.config));
+        this.scene.addView("accountList", new AccountListView(this.config));
     }
 
     public start(onExit) {
