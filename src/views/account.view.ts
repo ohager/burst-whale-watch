@@ -1,7 +1,8 @@
 import * as blessed from "neo-blessed"
 import {View} from "./view";
 import {
-    selectIsLoadingExchange
+    selectGetAccountTransactions,
+    selectIsLoadingExchange, selectIsLoadingTransactions
 } from "../state/selectors";
 import {Transaction} from "@burstjs/core";
 import {convertNumericIdToAddress, convertNQTStringToNumber} from "@burstjs/util";
@@ -74,22 +75,24 @@ export class AccountView implements View {
 
     public update(state:any, accountData:AccountData){
 
-        const isLoading = selectIsLoadingExchange(state);
+        const isLoading = selectIsLoadingTransactions(state);
 
         if (isLoading || !accountData) {
             return;
         }
 
-        const address = convertNumericIdToAddress(accountData.id);
+        const accountId = accountData.id;
+        const address = convertNumericIdToAddress(accountId);
         const balanceBurst = convertNQTStringToNumber(accountData.balance).toFixed(3);
 
         let startLine = 1;
         this.box.setLabel({text: `(${accountData.index}) {bold}${address}{/}`, side: 'left'});
-        this.text.setLine(startLine, ` Account: ${accountData.id}`);
+        this.text.setLine(startLine, ` Account: ${accountId}`);
         this.text.setLine(++startLine, ` Total [BURST]: ${balanceBurst}`);
 
+        const accountTransactions = selectGetAccountTransactions(state);
 
-        this.transactionTable.update(state, accountData.transactions);
+        this.transactionTable.update(state, accountId, accountTransactions[accountId]);
 
     }
 

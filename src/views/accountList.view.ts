@@ -2,7 +2,7 @@ import * as blessed from "neo-blessed"
 import {View} from "./view";
 import {AccountData, AccountView} from "./account.view";
 import {Config} from "../config";
-import {selectCurrentAccountIndex, selectGetAccountBalances} from "../state/selectors";
+import {selectCurrentAccountIndex, selectGetAccountBalances, selectGetAccountTransactions} from "../state/selectors";
 import {MAX_VISIBLE_ACCOUNTS} from "../constants";
 
 export class AccountListView implements View {
@@ -49,13 +49,12 @@ export class AccountListView implements View {
     private mapAccountViewData(state: any): AccountData[] {
         const currentAccountIndex = selectCurrentAccountIndex(state);
 
-        const accountsMap = selectGetAccountBalances(state);
-
+        const accountBalancesMap = selectGetAccountBalances(state);
         const accountsArray = Object
-            .keys(accountsMap)
+            .keys(accountBalancesMap)
             .map(accountId => ({
                     accountId,
-                    balance: accountsMap[accountId]
+                    balance: accountBalancesMap[accountId]
                 })
             );
 

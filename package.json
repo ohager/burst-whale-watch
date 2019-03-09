@@ -13,7 +13,7 @@
   "author": "ohager",
   "license": "MIT",
   "dependencies": {
-    "@burstjs/core": "0.1.0-rc1",
+    "@burstjs/core": "0.1.0-rc.3",
     "chalk": "^2.4.2",
     "fs-extra": "^7.0.1",
     "inquirer": "^6.2.2",

@@ -4,8 +4,10 @@ import {
     selectIsLoadingTransactions
 } from "../state/selectors";
 import {Transaction} from "@burstjs/core";
-import {convertNumericIdToAddress, convertNQTStringToNumber} from "@burstjs/util";
+import {convertBurstTimeToDate, convertNQTStringToNumber, } from "@burstjs/util";
+import {Converter} from "@burstjs/crypto";
 import {LOADING_TEXT} from "../constants";
+import chalk from "chalk";
 
 export interface AccountData {
     id: string,
@@ -18,7 +20,7 @@ export class TransactionTableView implements View {
     private loadingText: any;
     private titleText: any;
 
-    constructor(parentView: any) {
+    constructor(private parentView: any) {
 
         this.loadingText = blessed.text({
             parent: parentView,
@@ -60,6 +62,7 @@ export class TransactionTableView implements View {
             align: 'center',
             tags: true,
             width: '100%-2',
+            height: 'shrink',
             style: {
                 border: {
                     fg: 'white'
@@ -81,11 +84,12 @@ export class TransactionTableView implements View {
         return this.table;
     }
 
-    public update(state: any, transactions: Transaction[]) {
+
+    public update(state: any, accountId: string, transactions: Transaction[],) {
         const isLoading = selectIsLoadingTransactions(state);
 
-        if(isLoading){
-            this.loadingText.setLine(0,LOADING_TEXT);
+        if (isLoading) {
+            this.loadingText.setLine(0, LOADING_TEXT);
             this.loadingText.show();
             this.titleText.hide();
             this.table.hide();
@@ -93,22 +97,39 @@ export class TransactionTableView implements View {
         }
         this.loadingText.hide();
 
-        this.titleText.setLine(0,'Most recent transactions');
+        this.titleText.setLine(0, 'Most recent transactions');
         this.titleText.show();
 
         this.table.show();
 
         let data = [
             ['Id', 'Date', 'Amount', 'Receiver/Sender'],
-            ['Elephant', 'Apple', '1:00am', 'One'],
-            ['Bird', 'Orange', '2:15pm', 'Two'],
-            ['T-Rex', 'Taco', '8:45am', 'Three'],
-            ['Mouse', 'Cheese', '9:05am', 'Four']
-        ];
-
-        data[1][0] = '{red-fg}' + data[1][0] + '{/red-fg}';
+        ].concat(this.getPrintableTransactions(accountId, transactions));
 
         this.table.setData(data);
     }
 
+    private getRecipientSenderId(accountId: string, t: Transaction): string {
+
+        const accountAddress = t.sender === accountId ? t.recipientRS : t.senderRS;
+        if(!accountAddress) return '-';
+        return accountAddress.replace('BURST-', '');
+    }
+
+    private getAmount(accountId: string, transaction: Transaction): string {
+        return transaction.sender === accountId
+            ? chalk.red(`-${convertNQTStringToNumber(transaction.amountNQT).toFixed(3)}`)
+            : chalk.green(`${convertNQTStringToNumber(transaction.amountNQT).toFixed(3)}`)
+    }
+
+    private getPrintableTransactions(accountId: string, transactions: Transaction[]): any[] {
+        const visibleTransactions = transactions.slice(0, Math.floor(this.parentView.height / 3));
+        return visibleTransactions.map(t => ([
+                t.transaction,
+                convertBurstTimeToDate(t.timestamp).toLocaleDateString(),
+                this.getAmount(accountId, t),
+                this.getRecipientSenderId(accountId, t)
+            ])
+        )
+    }
 }
