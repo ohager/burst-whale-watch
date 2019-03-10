@@ -2,7 +2,7 @@ import {existsSync} from "fs";
 import * as path from "path";
 import {ConfigDialog} from "./configDialog";
 import {readJsonSync, writeJsonSync} from "fs-extra";
-import {uniq} from "lodash";
+import {uniq, difference} from "lodash";
 
 const configPath = path.join(__filename, "../config.json");
 const asString = (n:any): string => n + '';
@@ -24,13 +24,26 @@ export class Config {
     }
 
 
-    public static async updateAccounts(accounts:Array<string>): Promise<Config> {
+    public static async addAccounts(accounts:Array<string>): Promise<Config> {
 
         const config = await Config.load();
 
         const updatedConfig = {
             ...config,
             accounts: uniq(config.accounts.concat(accounts.map(asString)))
+        };
+
+        writeJsonSync(configPath, updatedConfig);
+        return config;
+    }
+
+    public static async removeAccounts(accounts:Array<string>): Promise<Config> {
+
+        const config = await Config.load();
+
+        const updatedConfig = {
+            ...config,
+            accounts: difference(config.accounts, accounts)
         };
 
         writeJsonSync(configPath, updatedConfig);

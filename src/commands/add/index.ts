@@ -29,6 +29,6 @@ async function validateAccounts(accounts: string[]) {
 
 exports.handler = async (argv) => {
     const validAccounts = await validateAccounts(argv.accounts);
-    await Config.updateAccounts(validAccounts);
+    await Config.addAccounts(validAccounts);
 
 };
