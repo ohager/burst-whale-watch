@@ -50,7 +50,7 @@ export class BrsCollector extends Collector {
         this.api = composeApi({
             nodeHost: config.peer,
             apiRootUrl: '/burst'
-        })
+        });
     }
 
     private pollBalances() {
@@ -89,8 +89,10 @@ export class BrsCollector extends Collector {
     }
 
     protected onStop() {
-        this.balancesSubscription.unsubscribe();
-        this.transactionsSubscription.unsubscribe();
+        if (this.balancesSubscription)
+            this.balancesSubscription.unsubscribe();
+        if (this.transactionsSubscription)
+            this.transactionsSubscription.unsubscribe();
     }
 
 }

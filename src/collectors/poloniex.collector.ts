@@ -40,7 +40,8 @@ export class PoloniexCollector extends Collector {
     }
 
     private unsubscribeTicker() {
-        this.subscription.unsubscribe();
+        if(this.subscription)
+            this.subscription.unsubscribe();
     }
 
     protected onStart() {

@@ -2,7 +2,11 @@
   "name": "burst-whale-watch",
   "version": "1.0.0",
   "description": "An account watcher for Burst",
-  "main": "./out/main.js",
+  "main": "./out/src/main.js",
+  "types": "./out/src/main.d.ts",
+  "bin": {
+    "burst-whale-watch":"./out/src/main.js"
+  },
   "scripts": {
     "build": "tsc",
     "start": "npm run build && node ./out/src/main.js"

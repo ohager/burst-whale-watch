@@ -1,7 +1,7 @@
-import yargs = require("yargs");
+#!/usr/bin/env node
+import {command} from "yargs";
 
-yargs
-    .command(require('./commands/default'))
+command(require('./commands/default'))
     .command(require('./commands/add'))
     .command(require('./commands/clear'))
     .argv;

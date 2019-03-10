@@ -75,7 +75,7 @@ export class AccountListView implements View {
         let line;
 
         if (currentAccountIndex === 0 && MAX_VISIBLE_ACCOUNTS < this.numberOfAccounts) {
-            line = ' '.repeat(this.box.width - 5) + '->'
+            line = ' '.repeat(Math.max(0,this.box.width - 5)) + '->'
         } else if (0 < currentAccountIndex && currentAccountIndex < this.numberOfAccounts - MAX_VISIBLE_ACCOUNTS) {
             line = ' <-' + ' '.repeat(this.box.width - 8) + '->'
         } else if (0 < currentAccountIndex) {
