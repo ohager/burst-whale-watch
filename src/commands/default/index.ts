@@ -26,7 +26,7 @@ const handle = {
 
 exports.command = '$0';
 
-exports.describe = 'Gets Account Stats';
+exports.describe = 'An CLI based Burst Account watcher';
 
 exports.builder = () => {
 };
