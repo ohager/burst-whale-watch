@@ -1,5 +1,6 @@
 import {Config} from "../../config";
-import {ApiSettings, composeApi} from "@burstjs/core";
+import {composeApi} from "@burstjs/core";
+import {convertNumericIdToAddress} from "@burstjs/util";
 
 exports.command = 'add <accounts...>';
 
@@ -29,6 +30,13 @@ async function validateAccounts(accounts: string[]) {
 
 exports.handler = async (argv) => {
     const validAccounts = await validateAccounts(argv.accounts);
-    await Config.addAccounts(validAccounts);
+    const updatedConfig = await Config.addAccounts(validAccounts);
+
+    console.log(`Account(s) added successfully
+These are your registered accounts:
+
+${updatedConfig.accounts.map((id, i) => `\n${i + 1}. ${id} (${convertNumericIdToAddress(id)})`)}
+    
+    `);
 
 };

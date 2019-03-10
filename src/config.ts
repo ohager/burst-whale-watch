@@ -1,7 +1,7 @@
 import {existsSync} from "fs";
 import * as path from "path";
 import {ConfigDialog} from "./configDialog";
-import {readJsonSync, writeJsonSync} from "fs-extra";
+import {readJsonSync, writeJsonSync, remove} from "fs-extra";
 import {uniq, difference} from "lodash";
 
 const configPath = path.join(__filename, "../config.json");
@@ -20,7 +20,7 @@ export class Config {
             writeJsonSync(configPath, answers);
             return answers;
         }
-        return <Config>readJsonSync(configPath);
+        return readJsonSync(configPath);
     }
 
 
@@ -34,7 +34,7 @@ export class Config {
         };
 
         writeJsonSync(configPath, updatedConfig);
-        return config;
+        return updatedConfig;
     }
 
     public static async removeAccounts(accounts:Array<string>): Promise<Config> {
@@ -47,7 +47,7 @@ export class Config {
         };
 
         writeJsonSync(configPath, updatedConfig);
-        return config;
+        return updatedConfig;
     }
 
     public static async clearAccounts(): Promise<Config> {
@@ -58,6 +58,10 @@ export class Config {
 
         writeJsonSync(configPath, config);
         return config;
+    }
+
+    public static async delete() : Promise<void> {
+        await remove(configPath);
     }
 
 }
