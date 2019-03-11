@@ -1,5 +1,4 @@
 import * as blessed from "neo-blessed";
-import {version} from "../../package.json"
 import {View} from "./view";
 import {Store} from "../../typings/stappo/store";
 import {Config} from "../config";
@@ -28,7 +27,7 @@ export class Scene {
                 smartCSR: true,
                 autoPadding: true,
                 fullUnicode: true,
-                title: `BURST Whale Watcher ${version}`,
+                title: `BURST Whale Watcher by ohager`,
                 cursor: {
                     artificial: true,
                     shape: 'line',

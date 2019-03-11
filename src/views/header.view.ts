@@ -1,7 +1,6 @@
 import chalk from "chalk"
 import * as blessed from "neo-blessed"
 import {View} from "./view";
-import {author, version} from "../../package.json";
 import {
     selectExchangeName,
     selectGetBalanceInBtc, selectGetBalanceInUsd,
@@ -25,7 +24,7 @@ export class HeaderView implements View {
             width: '100%',
             height: 6,
             tags: true,
-            label: {text: `{bold}BURST Whale Watch ${version} by ${author}{/}`, side: 'right'},
+            label: {text: `{bold}BURST Whale Watch by ohager{/}`, side: 'right'},
             border: {
                 type: 'line'
             },
