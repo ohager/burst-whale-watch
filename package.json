@@ -21,21 +21,21 @@
   "author": "ohager",
   "license": "MIT",
   "dependencies": {
-    "@burstjs/core": "0.1.0-rc.3",
+    "@burstjs/core": "0.4.0",
     "chalk": "^2.4.2",
-    "fs-extra": "^7.0.1",
-    "inquirer": "^6.2.2",
-    "lodash": "^4.17.11",
+    "fs-extra": "^8.1.0",
+    "inquirer": "^7.0.0",
+    "lodash": "^4.17.15",
     "neo-blessed": "^0.2.0",
-    "rxjs": "^6.4.0",
+    "rxjs": "^6.5.3",
     "stappo": "0.0.7",
-    "yargs": "^13.2.1"
+    "yargs": "^14.2.0"
   },
   "devDependencies": {
-    "@types/fs-extra": "^5.0.5",
-    "@types/lodash": "^4.14.121",
-    "@types/ws": "^6.0.1",
-    "@types/yargs": "^12.0.9",
-    "typescript": "^3.3.3"
+    "@types/fs-extra": "^8.0.1",
+    "@types/lodash": "^4.14.144",
+    "@types/ws": "^6.0.3",
+    "@types/yargs": "^13.0.3",
+    "typescript": "^3.6.4"
   }
 }

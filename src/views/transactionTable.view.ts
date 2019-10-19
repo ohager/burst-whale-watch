@@ -5,7 +5,6 @@ import {
 } from "../state/selectors";
 import {Transaction} from "@burstjs/core";
 import {convertBurstTimeToDate, convertNQTStringToNumber, } from "@burstjs/util";
-import {Converter} from "@burstjs/crypto";
 import {LOADING_TEXT} from "../constants";
 import chalk from "chalk";
 

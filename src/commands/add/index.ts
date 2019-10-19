@@ -1,5 +1,5 @@
 import {Config} from "../../config";
-import {composeApi} from "@burstjs/core";
+import {ApiSettings, composeApi} from "@burstjs/core";
 import {convertNumericIdToAddress} from "@burstjs/util";
 
 exports.command = 'add <accounts...>';
@@ -12,10 +12,7 @@ exports.builder = () => {
 async function validateAccounts(accounts: string[]) {
 
     const {peer} = await Config.load();
-    const api = composeApi({
-        nodeHost: peer,
-        apiRootUrl: '/burst'
-    });
+    const api = composeApi(new ApiSettings(peer, '/burst'));
 
     return accounts.filter(async (account) => {
         try {

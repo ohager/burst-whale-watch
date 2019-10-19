@@ -1,5 +1,5 @@
 import * as inquirer from 'inquirer'
-import {composeApi} from "@burstjs/core";
+import {ApiSettings, composeApi} from "@burstjs/core";
 import {HttpError} from "@burstjs/http";
 
 export class ConfigDialog {
@@ -12,10 +12,7 @@ export class ConfigDialog {
     }
 
     private static async validatePeer(peer: string) {
-        const api = composeApi({
-            nodeHost: peer,
-            apiRootUrl: '/burst'
-        });
+        const api = composeApi(new ApiSettings(peer, '/burst'));
 
         try {
             const bottomBar = new inquirer.ui.BottomBar();
@@ -45,10 +42,7 @@ export class ConfigDialog {
     };
 
     private static async validateAccount(peer, accountId: string): Promise<boolean | string> {
-        const api = composeApi({
-            nodeHost: peer,
-            apiRootUrl: '/burst'
-        });
+        const api = composeApi(new ApiSettings(peer, '/burst'));
         try {
             const bottomBar = new inquirer.ui.BottomBar();
             bottomBar.updateBottomBar('Validating Account Id');

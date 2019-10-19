@@ -61,7 +61,7 @@ export class App {
         this.storeListenerId = this.store.listen(this.scene.render.bind(this.scene));
 
         this.brsCollector = new BrsCollector(this.store, this.config);
-        this.poloniexCollector = new PoloniexCollector(this.store);
+        // this.poloniexCollector = new PoloniexCollector(this.store);
 
         this.scene.addView("header", new HeaderView());
         this.scene.addView("accountList", new AccountListView(this.config));
@@ -78,13 +78,13 @@ export class App {
         this.scene.render(getInitialState()); // initial
 
         this.brsCollector.start();
-        this.poloniexCollector.start();
+        // this.poloniexCollector.start();
     }
 
     public stop() {
         this.store.unlisten(this.storeListenerId);
         this.brsCollector.stop();
-        this.poloniexCollector.stop();
+        // this.poloniexCollector.stop();
         this.scene.destroy();
     }
 

@@ -1,6 +1,6 @@
 import {interval, Subscription} from "rxjs"
 import {mergeMap, map, startWith} from "rxjs/operators"
-import {Api, Balance, composeApi, TransactionList} from "@burstjs/core";
+import {Api, ApiSettings, Balance, composeApi, TransactionList} from "@burstjs/core";
 import {convertNQTStringToNumber} from "@burstjs/util";
 import {Collector} from "./collector";
 import {Store} from "../../typings/stappo/store";
@@ -47,10 +47,7 @@ export class BrsCollector extends Collector {
 
     constructor(store: Store, private config: Config) {
         super(store);
-        this.api = composeApi({
-            nodeHost: config.peer,
-            apiRootUrl: '/burst'
-        });
+        this.api = composeApi(new ApiSettings(config.peer,'/burst'));
     }
 
     private pollBalances() {
