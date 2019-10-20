@@ -4,7 +4,7 @@ import {
     selectIsLoadingTransactions
 } from "../state/selectors";
 import {Transaction} from "@burstjs/core";
-import {convertBurstTimeToDate, convertNQTStringToNumber, } from "@burstjs/util";
+import {convertBurstTimeToDate, convertNQTStringToNumber} from "@burstjs/util";
 import {LOADING_TEXT} from "../constants";
 import chalk from "chalk";
 
@@ -111,7 +111,7 @@ export class TransactionTableView implements View {
     private getRecipientSenderId(accountId: string, t: Transaction): string {
 
         const accountAddress = t.sender === accountId ? t.recipientRS : t.senderRS;
-        if(!accountAddress) return '-';
+        if (!accountAddress) return '-';
         return accountAddress.replace('BURST-', '');
     }
 

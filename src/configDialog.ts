@@ -1,6 +1,7 @@
 import * as inquirer from 'inquirer'
 import {ApiSettings, composeApi} from "@burstjs/core";
 import {HttpError} from "@burstjs/http";
+import { isBurstAddress, convertAddressToNumericId } from '@burstjs/util';
 
 export class ConfigDialog {
 
@@ -34,7 +35,7 @@ export class ConfigDialog {
                     type: 'input',
                     name: 'peer',
                     message: 'Which peer do you wanna use?',
-                    default: 'https://wallet1.burst-team.us:2083',
+                    default: 'https://wallet.burst-alliance.org:8125',
                     validate: ConfigDialog.validatePeer
                 }]
             );
@@ -62,7 +63,7 @@ export class ConfigDialog {
                 {
                     type: 'input',
                     name: 'account',
-                    message: "Enter an Account to watch (numeric id)?",
+                    message: "Enter an Account to watch (Numeric Id or Burst Address)?",
                     validate: ConfigDialog.validateAccount.bind(null, peer)
                 },
                 {
@@ -73,7 +74,7 @@ export class ConfigDialog {
                 }
             ]);
 
-        accounts.push(account);
+        accounts.push(isBurstAddress(account) ? convertAddressToNumericId(account) : account);
         if (askAgain) await this.askAccount(peer, accounts);
 
         return accounts;
