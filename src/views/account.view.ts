@@ -2,7 +2,7 @@ import * as blessed from "neo-blessed"
 import {View} from "./view";
 import {
     selectGetAccountTransactions,
-    selectIsLoadingExchange, selectIsLoadingTransactions
+    selectIsLoadingMarketInfo, selectIsLoadingTransactions
 } from "../state/selectors";
 import {Transaction} from "@burstjs/core";
 import {convertNumericIdToAddress, convertNQTStringToNumber} from "@burstjs/util";

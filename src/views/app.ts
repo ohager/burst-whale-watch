@@ -4,22 +4,8 @@ import {HeaderView} from "./header.view";
 import {BrsCollector} from "../collectors/brs.collector";
 import {Config} from "../config";
 import {Store} from "../../typings/stappo/store";
-import {PoloniexCollector} from "../collectors/poloniex.collector";
 import {AccountListView} from "./accountList.view";
-
-
-export class ExchangeData{
-    public last: "";
-    public lowestAsk: "";
-    public highestBid: "";
-    public percentChange: "";
-    public baseVolume: "";
-    public quoteVolume: "";
-    public isFrozen: "";
-    public high24hr: "";
-    public low24hr: ""
-}
-
+import {CmcCollector} from '../collectors/cmc.collector';
 
 const getInitialState = () => ({
     app:{
@@ -34,11 +20,12 @@ const getInitialState = () => ({
         isLoading: true,
         accounts: {}
     },
-    exchange: {
-        name: 'poloniex.com',
+    market: {
+        name: 'coinmarketcap.com',
         isLoading: true,
-        BTC_BURST: new ExchangeData(),
-        USDT_BTC: new ExchangeData(),
+        price_usd: '...',
+        price_btc: '...',
+        percent_change_24h: '...',
     }
 });
 
@@ -46,7 +33,7 @@ const getInitialState = () => ({
 export class App {
     private scene: Scene;
     private brsCollector: BrsCollector;
-    private poloniexCollector: PoloniexCollector;
+    private cmcCollector: CmcCollector;
     private storeListenerId: number;
     private store: Store;
 
@@ -61,7 +48,7 @@ export class App {
         this.storeListenerId = this.store.listen(this.scene.render.bind(this.scene));
 
         this.brsCollector = new BrsCollector(this.store, this.config);
-        // this.poloniexCollector = new PoloniexCollector(this.store);
+        this.cmcCollector = new CmcCollector(this.store);
 
         this.scene.addView("header", new HeaderView());
         this.scene.addView("accountList", new AccountListView(this.config));
@@ -78,13 +65,13 @@ export class App {
         this.scene.render(getInitialState()); // initial
 
         this.brsCollector.start();
-        // this.poloniexCollector.start();
+        this.cmcCollector.start();
     }
 
     public stop() {
         this.store.unlisten(this.storeListenerId);
         this.brsCollector.stop();
-        // this.poloniexCollector.stop();
+        this.cmcCollector.stop();
         this.scene.destroy();
     }
 

@@ -3,18 +3,25 @@ import * as path from "path";
 import {ConfigDialog} from "./configDialog";
 import {readJsonSync, writeJsonSync, remove} from "fs-extra";
 import {uniq, difference} from "lodash";
+import {isBurstAddress, convertAddressToNumericId} from "@burstjs/util";
 
 const configPath = path.join(__filename, "../config.json");
-const asString = (n:any): string => n + '';
+const asAccountId = (account: any): string => {
+    let accountId = account + '';
+    if (isBurstAddress(account)) {
+        accountId = convertAddressToNumericId(account)
+    }
+    return accountId;
+};
 
 export class Config {
 
     public peer: string;
     public accounts: Array<string>;
 
-    public static async load(): Promise<Config>{
+    public static async load(): Promise<Config> {
 
-        if(!existsSync(configPath)){
+        if (!existsSync(configPath)) {
             const configDialog = new ConfigDialog();
             const answers = await configDialog.run();
             writeJsonSync(configPath, answers);
@@ -24,20 +31,20 @@ export class Config {
     }
 
 
-    public static async addAccounts(accounts:Array<string>): Promise<Config> {
+    public static async addAccounts(accounts: Array<string>): Promise<Config> {
 
         const config = await Config.load();
 
         const updatedConfig = {
             ...config,
-            accounts: uniq(config.accounts.concat(accounts.map(asString)))
+            accounts: uniq(config.accounts.concat(accounts.map(asAccountId)))
         };
 
         writeJsonSync(configPath, updatedConfig);
         return updatedConfig;
     }
 
-    public static async removeAccounts(accounts:Array<string>): Promise<Config> {
+    public static async removeAccounts(accounts: Array<string>): Promise<Config> {
 
         const config = await Config.load();
 
@@ -60,7 +67,7 @@ export class Config {
         return config;
     }
 
-    public static async delete() : Promise<void> {
+    public static async delete(): Promise<void> {
         await remove(configPath);
     }
 

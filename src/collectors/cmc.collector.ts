@@ -3,22 +3,23 @@ import {Store} from '../../typings/stappo/store';
 import {interval, Subscription} from 'rxjs';
 import {map, mergeMap, startWith} from 'rxjs/operators';
 import {HttpImpl, Http, HttpResponse} from '@burstjs/http'
-import {EXCHANGE_POLLING_SEC} from "../constants";
+import {CMC_POLLING_SEC} from "../constants";
 
 const fetchTicker = async (httpClient: Http): Promise<HttpResponse> =>
-    await httpClient.get('/public?command=returnTicker');
+    await httpClient.get('v1/ticker/burst');
 
 
-const relevantCurrencyPairs = (data: HttpResponse): object => {
-    const {BTC_BURST, USDT_BTC} = data.response;
+const relevantTickerInfo = (data: HttpResponse) : object => {
+    const {price_usd, price_btc, percent_change_24h} = data.response[0];
     return {
-        BTC_BURST,
-        USDT_BTC
+        price_usd,
+        price_btc,
+        percent_change_24h
     }
 };
 
-export class PoloniexCollector extends Collector {
-    private http = new HttpImpl('https://poloniex.com');
+export class CmcCollector extends Collector {
+    private http = new HttpImpl('https://api.coinmarketcap.com');
     private subscription: Subscription;
 
     constructor(store: Store) {
@@ -26,13 +27,13 @@ export class PoloniexCollector extends Collector {
     }
 
     private subscribeTicker() {
-        this.subscription = interval(EXCHANGE_POLLING_SEC * 1000)
+        this.subscription = interval(CMC_POLLING_SEC * 1000)
             .pipe(
                 startWith(0),
                 mergeMap(() => fetchTicker(this.http)),
-                map(relevantCurrencyPairs)
+                map(relevantTickerInfo)
             ).subscribe((data) => {
-                this.update('exchange', {
+                this.update('market', {
                     ...data,
                     isLoading: false,
                 });

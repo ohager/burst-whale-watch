@@ -1,6 +1,6 @@
 import {Config} from "../../config";
 import {ApiSettings, composeApi} from "@burstjs/core";
-import {convertNumericIdToAddress} from "@burstjs/util";
+import {convertNumericIdToAddress, convertAddressToNumericId, isBurstAddress} from "@burstjs/util";
 
 exports.command = 'add <accounts...>';
 
@@ -16,7 +16,11 @@ async function validateAccounts(accounts: string[]) {
 
     return accounts.filter(async (account) => {
         try {
-            await api.account.getAccount(account);
+            let accountId = account;
+            if(isBurstAddress(account)){
+                accountId = convertAddressToNumericId(account)
+            }
+            await api.account.getAccount(accountId);
             return true;
         } catch (e) {
             console.error(`Account ${account} is invalid - ignored`);

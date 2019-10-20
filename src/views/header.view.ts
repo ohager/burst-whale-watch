@@ -2,12 +2,11 @@ import chalk from "chalk"
 import * as blessed from "neo-blessed"
 import {View} from "./view";
 import {
-    selectExchangeName,
+    selectInfoSourceName,
     selectGetBalanceInBtc, selectGetBalanceInUsd,
     selectGetBtcBurst, selectGetBtcBurstChange,
-    selectGetTotalBalance, selectGetUsdBtc, selectGetUsdBtcChange,
-    selectIsLoadingBalances,
-    selectIsLoadingExchange
+    selectGetTotalBalance, selectGetUsdBurst, selectIsLoadingBalances,
+    selectIsLoadingMarketInfo
 } from "../state/selectors";
 import {LOADING_TEXT} from "../constants";
 
@@ -88,8 +87,8 @@ export class HeaderView implements View {
 
     public updateRight(state: any) {
         let target = this.rightText;
-        const isLoading = selectIsLoadingExchange(state);
-        const exchangeName = selectExchangeName(state);
+        const isLoading = selectIsLoadingMarketInfo(state);
+        const infoSourceName = selectInfoSourceName(state);
 
         if (isLoading) {
             target.setLine(0, `BTC/BURST: ${LOADING_TEXT}`);
@@ -99,12 +98,11 @@ export class HeaderView implements View {
 
         const btcBurst = selectGetBtcBurst(state);
         const btcBurstChange = selectGetBtcBurstChange(state);
-        const usdBtc = selectGetUsdBtc(state);
-        const usdBtcChange = selectGetUsdBtcChange(state);
+        const usdBurst = selectGetUsdBurst(state);
 
         target.setLine(0, `BTC/BURST: ${btcBurst} ${HeaderView.formatChangeText(btcBurstChange)}`);
-        target.setLine(1, `USD/BTC: ${usdBtc} ${HeaderView.formatChangeText(usdBtcChange)}`);
-        target.setLine(2, chalk.gray(`Source: ${exchangeName}`));
+        target.setLine(1, `USD/BURST: ${usdBurst}`);
+        target.setLine(2, chalk.gray(`Source: ${infoSourceName}`));
     }
 
     private updateLeft(state: any) {

@@ -1,7 +1,7 @@
 {
   "name": "burst-whale-watch",
-  "version": "1.0.1",
-  "description": "An account watcher for Burst",
+  "version": "1.1.0",
+  "description": "An account watcher for Burstcoin",
   "files": [
     "/out"
   ],
@@ -16,7 +16,10 @@
     "start": "npm run build && node ./out/main.js"
   },
   "keywords": [
-    "burstjs"
+    "burstjs",
+    "burst",
+    "burstcoin",
+    "cryptocoin"
   ],
   "author": "ohager",
   "license": "MIT",

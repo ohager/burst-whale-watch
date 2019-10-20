@@ -10,20 +10,18 @@ export const selectIsLoadingBalances = (state: any): boolean => state.balances.i
 export const selectGetAccountTransactions = (state: any): any => state.transactions.accounts;
 export const selectIsLoadingTransactions = (state: any): boolean => state.transactions.isLoading;
 
-//exchange
-export const selectGetUsdBtc = (state: any): string =>
-    Number.parseFloat(state.exchange.USDT_BTC.last).toFixed(3);
-export const selectGetBtcBurst = (state: any): string => state.exchange.BTC_BURST.last;
+//market
+export const selectGetUsdBurst = (state: any): string =>
+    Number.parseFloat(state.market.price_usd).toFixed(3);
+export const selectGetBtcBurst = (state: any): string => state.market.price_btc;
 export const selectGetBtcBurstChange = (state: any): string =>
-    Number.parseFloat(state.exchange.BTC_BURST.percentChange).toFixed(4);
-export const selectGetUsdBtcChange = (state: any): string =>
-    Number.parseFloat(state.exchange.USDT_BTC.percentChange).toFixed(4);
-export const selectIsLoadingExchange = (state: any): boolean => state.exchange.isLoading;
-export const selectExchangeName = (state: any): string => state.exchange.name;
+    Number.parseFloat(state.market.percent_change_24h).toFixed(4);
+export const selectIsLoadingMarketInfo = (state: any): boolean => state.market.isLoading;
+export const selectInfoSourceName = (state: any): string => state.market.name;
 
 export const selectGetBalanceInBtc = (state: any): string => {
 
-    if (selectIsLoadingExchange(state)
+    if (selectIsLoadingMarketInfo(state)
         || selectIsLoadingBalances(state)
     ) {
         return null;
@@ -32,19 +30,20 @@ export const selectGetBalanceInBtc = (state: any): string => {
     const totalBurstString = selectGetTotalBalance(state);
     const totalBurst = Number.parseFloat(totalBurstString);
     const btcBurst = Number.parseFloat(selectGetBtcBurst(state));
+
     return (totalBurst * btcBurst).toFixed(4);
 };
 
 export const selectGetBalanceInUsd = (state: any): string => {
 
-    if (selectIsLoadingExchange(state)
+    if (selectIsLoadingMarketInfo(state)
         || selectIsLoadingBalances(state)
     ) {
         return null;
     }
 
-    const balanceInBtc = Number.parseFloat(selectGetBalanceInBtc(state));
-    const usdInBtc = Number.parseFloat(selectGetUsdBtc(state));
-
-    return (balanceInBtc * usdInBtc).toFixed(4);
+    const totalBurstString = selectGetTotalBalance(state);
+    const totalBurst = Number.parseFloat(totalBurstString);
+    const usdBurst = Number.parseFloat(selectGetUsdBurst(state));
+    return (totalBurst * usdBurst).toFixed(4);
 };
